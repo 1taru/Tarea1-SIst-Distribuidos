@@ -10,6 +10,7 @@ import (
 	"os"
 	"time"
 
+	"github.com/redis/go-redis/v9"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )
@@ -24,6 +25,26 @@ var (
 func main() {
 	flag.Parse()
 
+	redisClient := redis.NewClient(&redis.Options{
+		Addr: "localhost:6379",
+	})
+	/*
+		redisClient := redis.NewClusterClient(&redis.ClusterOptions{
+			Addrs: []string{":16379", ":16380", ":16381", ":16382", ":16383", ":16384"},
+
+			// To route commands by latency or randomly, enable one of the following.
+			//RouteByLatency: true,
+			//RouteRandomly: true,
+		})
+	*/
+	defer redisClient.Close()
+
+	_, err := redisClient.Ping(context.Background()).Result()
+	log.Printf("Conectándose al servidor gRPC en %s", *addr)
+
+	if err != nil {
+		log.Fatal(err)
+	}
 	scanner := bufio.NewScanner(os.Stdin)
 
 	for {
@@ -94,7 +115,7 @@ func HandleGetFromCache(addr string, key string) (string, error) {
 	// Realiza la llamada al servidor gRPC
 	response, err := c.GetFromCache(ctx, &pb.GetFromCacheRequest{Key: key})
 	if err != nil {
-		return "", fmt.Errorf("error al llamar al servidor gRPC: %v", err)
+		return "", fmt.Errorf("error al llamar al servidor gRPC get: %v", err)
 	}
 
 	return response.Value, nil
@@ -118,7 +139,7 @@ func HandleSetInCache(addr string, key string, value string) (bool, error) {
 	// Realiza la llamada al servidor gRPC
 	response, err := c.SetInCache(ctx, &pb.SetInCacheRequest{Key: key, Value: value})
 	if err != nil {
-		return false, fmt.Errorf("error al llamar al servidor gRPC: %v", err)
+		return false, fmt.Errorf("error al llamar al servidor gRPC set: %v", err)
 	}
 
 	return response.Success, nil

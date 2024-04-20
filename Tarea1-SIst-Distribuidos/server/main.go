@@ -19,30 +19,24 @@ var (
 	port = flag.Int("port", 50051, "The server port")
 )
 
-var db *sql.DB
-var err error
-
 type server struct {
 	pb.UnimplementedDatabaseServiceServer
+	pb.UnimplementedCacheServiceServer
 }
 
 func (s *server) GetFromDatabase(ctx context.Context, req *pb.GetFromDatabaseRequest) (*pb.GetFromDatabaseResponse, error) {
 	key := req.GetKey()
 
-	// Aquí deberías incluir la lógica para buscar el valor en la base de datos.
-	// Por ejemplo, podrías abrir una conexión con la base de datos,
-	// ejecutar una consulta SQL para buscar el valor correspondiente al
-	// key proporcionado y luego procesar el resultado.
-
-	// Aquí hay un ejemplo básico para ilustrar el concepto:
-	db, err := sql.Open("postgres", "user=postgres dbname=mydatabase sslmode=disable")
+	// Abre la conexión a la base de datos
+	db, err := sql.Open("postgres", "user=postgres password=123 dbname=mydatabase sslmode=disable")
 	if err != nil {
 		log.Fatalf("failed to connect to database: %v", err)
 	}
 	defer db.Close()
 
+	// Realiza la consulta SQL para obtener el valor correspondiente a la clave
 	var value string
-	err = db.QueryRow("SELECT value FROM my_table WHERE key = $1", key).Scan(&value)
+	err = db.QueryRow("SELECT * FROM tabla2 WHERE nombre = $1", key).Scan(&value)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			log.Printf("key '%s' not found in the database", key)
@@ -67,6 +61,7 @@ func main() {
 
 	s := grpc.NewServer()
 	pb.RegisterDatabaseServiceServer(s, &server{})
+	pb.RegisterCacheServiceServer(s, &server{})
 	log.Printf("server listening at %v", lis.Addr())
 	if err := s.Serve(lis); err != nil {
 		log.Fatalf("failed to serve: %v", err)

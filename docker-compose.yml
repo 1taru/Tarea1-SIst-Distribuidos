@@ -1,0 +1,167 @@
+# para correr docker compose y eliminar contenedores huerfanos:
+# docker-compose up --build --remove-orphans
+
+#--- CACHE CENTRALIZADO ---
+#CON LRU
+version: '3'
+
+services:
+  redis:
+    image: redis:latest
+    ports:
+      - "6379:6379"
+    command: redis-server --maxmemory 10mb --maxmemory-policy allkeys-lru --appendonly yes
+
+#CON allkeys-random
+
+#services:
+#  redis:
+#    image: redis:latest
+#    ports:
+#      - "6379:6379"
+#    command: redis-server --maxmemory 10mb --maxmemory-policy allkeys-random --appendonly yes
+
+#--- CACHE REPLICADO ---
+# CON LRU
+
+#services:
+#  redis1:
+#    image: redis:latest
+#    command: redis-server --port 7000 --cluster-enabled yes --cluster-config-file /data/nodes.conf --cluster-node-timeout 5000 --appendonly yes --maxmemory 10mb --maxmemory-policy allkeys-lru --appendfsync everysec
+#    ports:
+#      - "7000:7000"
+#    networks:
+#      - redis-net
+#    volumes:
+#      - ./redis_cluster/7000:/data
+#  redis2:
+#    image: redis:latest
+#    command: redis-server --port 7001 --cluster-enabled yes --cluster-config-file /data/nodes.conf --cluster-node-timeout 5000 --appendonly yes --maxmemory 10mb --maxmemory-policy allkeys-lru --appendfsync everysec
+#    ports:
+#      - "7001:7001"
+#    networks:
+#      - redis-net
+#    volumes:
+#      - ./redis_cluster/7001:/data
+#  redis3:
+#    image: redis:latest
+#    command: redis-server --port 7002 --cluster-enabled yes --cluster-config-file /data/nodes.conf --cluster-node-timeout 5000 --appendonly yes --maxmemory 10mb --maxmemory-policy allkeys-lru --appendfsync everysec
+#    ports:
+#      - "7002:7002"
+#    networks:
+#      - redis-net
+#    volumes:
+#      - ./redis_cluster/7002:/data
+#networks:
+#  redis-net:
+#    driver: bridge
+
+# CON allkeys-random
+
+#services:
+#  redis1:
+#    image: redis:latest
+#    command: redis-server --port 7000 --cluster-enabled yes --cluster-config-file /data/nodes.conf --cluster-node-timeout 5000 --appendonly yes --maxmemory 10mb --maxmemory-policy allkeys-random --appendfsync everysec
+#    ports:
+#      - "7000:7000"
+#    networks:
+#      - redis-net
+#    volumes:
+#      - ./redis_cluster/7000:/data
+#  redis2:
+#    image: redis:latest
+#    command: redis-server --port 7001 --cluster-enabled yes --cluster-config-file /data/nodes.conf --cluster-node-timeout 5000 --appendonly yes --maxmemory 10mb --maxmemory-policy allkeys-random --appendfsync everysec
+#    ports:
+#      - "7001:7001"
+#    networks:
+#      - redis-net
+#    volumes:
+#      - ./redis_cluster/7001:/data
+#  redis3:
+#    image: redis:latest
+#    command: redis-server --port 7002 --cluster-enabled yes --cluster-config-file /data/nodes.conf --cluster-node-timeout 5000 --appendonly yes --maxmemory 10mb --maxmemory-policy allkeys-random --appendfsync everysec
+#    ports:
+#      - "7002:7002"
+#    networks:
+#      - redis-net
+#    volumes:
+#      - ./redis_cluster/7002:/data
+#networks:
+#  redis-net:
+#    driver: bridge
+
+#--- CACHE REPLICADO ---
+# CON LRU
+
+#services:
+#  redis1:
+#    image: redis:latest
+#    command: redis-server --port 7000 --appendonly yes --maxmemory 10mb --maxmemory-policy allkeys-lru --appendfsync everysec
+#    ports:
+#      - "7000:7000"
+#    networks:
+#      - redis-net
+#    volumes:
+#      - ./redis_cluster/7000:/data
+#  redis2:
+#    image: redis:latest
+#    command: redis-server --port 7001 --slaveof redis1 7000 --appendonly yes --maxmemory 10mb --maxmemory-policy allkeys-lru --appendfsync everysec
+#    ports:
+#      - "7001:7001"
+#    networks:
+#      - redis-net
+#    volumes:
+#      - ./redis_cluster/7001:/data
+#  redis3:
+#    image: redis:latest
+#    command: redis-server --port 7002 --slaveof redis1 7000 --appendonly yes --maxmemory 10mb --maxmemory-policy allkeys-lru --appendfsync everysec
+#    ports:
+#      - "7002:7002"
+#    networks:
+#      - redis-net
+#    volumes:
+#      - ./redis_cluster/7002:/data
+#networks:
+#  redis-net:
+#    driver: bridge
+
+# CON allkeys-random
+
+#services:
+#  redis1:
+#    image: redis:latest
+#    command: redis-server --port 7000 --appendonly yes --maxmemory 10mb --maxmemory-policy allkeys-random --appendfsync everysec
+#    ports:
+#      - "7000:7000"
+#    networks:
+#      - redis-net
+#    volumes:
+#      - ./redis_cluster/7000:/data
+#  redis2:
+#    image: redis:latest
+#    command: redis-server --port 7001 --slaveof redis1 7000 --appendonly yes --maxmemory 10mb --maxmemory-policy allkeys-random --appendfsync everysec
+#    ports:
+#      - "7001:7001"
+#    networks:
+#      - redis-net
+#    volumes:
+#      - ./redis_cluster/7001:/data
+#  redis3:
+#    image: redis:latest
+#    command: redis-server --port 7002 --slaveof redis1 7000 --appendonly yes --maxmemory 10mb --maxmemory-policy allkeys-random --appendfsync everysec
+#    ports:
+#      - "7002:7002"
+#    networks:
+#      - redis-net
+#    volumes:
+#      - ./redis_cluster/7002:/data
+#networks:
+#  redis-net:
+#    driver: bridge
+
+# debug cache replicado:
+# redis-cli --cluster fix localhost:7000
+# redis-cli --cluster fix localhost:7001
+# redis-cli --cluster fix localhost:7002
+
+

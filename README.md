@@ -1,7 +1,7 @@
 # Sistema de cache en Golang
 
 Este proyecto utiliza como motor de base de datos [Postgres](https://www.postgresql.org/).  
-Para el almacenamiento de cache se utiliza [Redis](https://redis.io/), en un contenedor de docker compose[Docker](https://docs.docker.com/compose/)
+Para el almacenamiento de cache se utiliza [Redis](https://redis.io/), en un contenedor de docker compose [Docker](https://docs.docker.com/compose/)
 Para la comunicación entre los servicios se utiliza [gRPC](https://grpc.io/), con su implementación en [Go](https://grpc.io/docs/languages/go/basics/).  
 Para la lectura de la información y su posterior almacenamiento en la base de datos se utilizan los comandos de postgres
 

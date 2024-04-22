@@ -66,8 +66,9 @@ Luego para el ingreso de estos datos se hace mediante copiado de postgres
 
 * Compilar protoc
 ```
-export PATH="$PATH:$(go env GOPATH)/bin"
-protoc --go_out=. --go_opt=paths=source_relative     --go-grpc_out=. --go-grpc_opt=paths=source_relative     proto/grpc_cache.proto
+protoc --go_out=. --go_opt=paths=source_relative \
+    --go-grpc_out=. --go-grpc_opt=paths=source_relative \
+    proto/grpc_cache.proto
 ```
 ## Iniciando docker-compose
 Para el inicio de las instancias de redis hay que realizar:

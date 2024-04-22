@@ -36,7 +36,7 @@ func (c *CacheClient) GetFromCache(ctx context.Context, req *pb.GetFromCacheRequ
 		Addr: "localhost:6379",
 	})
 
-	//cache con replicacion
+	//cache con particionamiento
 	/*
 		redisClient := redis.NewClusterClient(&redis.ClusterOptions{
 			Addrs: []string{
@@ -46,7 +46,7 @@ func (c *CacheClient) GetFromCache(ctx context.Context, req *pb.GetFromCacheRequ
 			},
 		})
 	*/
-	//cache con particionamiento
+	//cache con replicacion
 	/*
 		redisClient := redis.NewClient(&redis.Options{
 			Addr: "localhost:7000",
